@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Roku Apps List</title>
+
+    <table border = 3>
+    {% for app in apps %}
+        <tr>
+            <th> {{ app.name }} </th>
+            <td> {{ app.id }} </td>
+            <td> {{ app.version }}</td>
+        </tr>
+    {% endfor %}
+
+    </table>
+</head>
+<body>
+
+</body>
+</html>
