@@ -1,19 +1,25 @@
-from flask import Flask, redirect, url_for, render_template, session
+from flask import Flask, redirect, url_for, render_template, session, request
 import time
-from youtube_functions import youtube_search_cursor
-import youtube_functions as yt
+from youtubekb import YouTubeKeyboardController
+import youtubekb
+from roku import Roku
+
+
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 'super secret key'
+from flask_wtf import Form
+from youtubekb import YouTubeKeyBoardForm
 
 
-from roku import Roku
+
+
 
 roku = Roku('10.1.10.96')
 
 @app.route('/')
 def discovery():
-    session['LastKey'] = 'A'
+    session['YouTubeLastLetter'] = 'A'
     return redirect(url_for('youtubekeyboard'))
 
 
@@ -22,20 +28,32 @@ def listapps():
     apps = roku.apps
     return render_template("listapps.html", apps = apps)
 
-@app.route('/youtubekb')
+@app.route('/youtubekb', methods=['GET','POST'])
 def youtubekeyboard():
     # roku['YouTube'].launch()
     # time.sleep(15)
-    for i in "STUFF":
-        directions = yt.get_key_directions(session['LastKey'], i)
-        yt.input_keys(roku, directions, i)
+    form = YouTubeKeyBoardForm()
 
-    # put the cursor in a known position on the keyboard
-    # call the
-    return render_template("youtubekb.html", lastkey = session['LastKey'])
+    yt = YouTubeKeyboardController(roku)
 
+    if request.method == 'POST':
+        directions = []
+
+        # request.form['sendkeys'].upper()
+
+        #    session['LastKey'] = i
+
+        return render_template("youtubekb.html", lastkey=session['LastKey'], form=form, directions=directions,
+                               sendkeys=sendkeys)
+    else:
+        return render_template("youtubekb.html", lastkey=session['LastKey'], form=form)
+
+
+            # yt.input_keys(roku, directions, i)
+
+    # return render_template("youtubekb.html", lastkey = session['LastKey'], form = form, directions=directions, sendkeys = sendkeys )
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(use_reloader=True)
 

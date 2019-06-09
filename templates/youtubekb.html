@@ -3,7 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>YouTube Keyboard</title>
-    {{ lastkey }}
+    <div class="diagnostics">
+        Last Key: {{ lastkey }}<br>
+        Directions: {{ directions }}
+        Sendkeys: {{ sendkeys }}
+    </div>
+    <div class="kb-form">
+        <form action="/youtubekb" method="POST">
+            <fieldset>
+                {{ form.sendkeys.label }} <br>
+                {{ form.sendkeys(autofocus=true) }} <br>
+                {{ form.submit }}
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="footer">
+        <a href="{{ url_for('listapps') }}" target="_blank">APPS LIST</a>
+    </div>
 </head>
 <body>
 
