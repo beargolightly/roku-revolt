@@ -1,10 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, session, request
-import time
 from youtubekb import YouTubeKeyboardController
-import youtubekb
 from roku import Roku
-
-
 app = Flask(__name__)
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['SECRET_KEY'] = 'super secret key'
@@ -19,7 +15,7 @@ roku = Roku('10.1.10.96')
 
 @app.route('/')
 def discovery():
-    session['YouTubeLastLetter'] = 'A'
+    session['lastKey'] = 'A'
     return redirect(url_for('youtubekeyboard'))
 
 
@@ -37,16 +33,15 @@ def youtubekeyboard():
     yt = YouTubeKeyboardController(roku)
 
     if request.method == 'POST':
-        directions = []
+        currentKey = session['lastKey']
+        sendkeys = request.form['sendkeys'].upper()
+        button_list = yt.type_phrase(sendkeys, currentKey)
+        session['lastKey'] = yt.currentKey
 
-        # request.form['sendkeys'].upper()
-
-        #    session['LastKey'] = i
-
-        return render_template("youtubekb.html", lastkey=session['LastKey'], form=form, directions=directions,
-                               sendkeys=sendkeys)
+        return render_template("youtubekb.html", lastkey=session['lastKey'], form=form,
+                               sendkeys=sendkeys, button_list = button_list)
     else:
-        return render_template("youtubekb.html", lastkey=session['LastKey'], form=form)
+        return render_template("youtubekb.html", lastkey=session['lastKey'], form=form)
 
 
             # yt.input_keys(roku, directions, i)

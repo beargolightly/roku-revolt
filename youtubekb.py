@@ -14,28 +14,40 @@ class YouTubeKeyboardController:
                                 ['H','I','J','K','L','M','N'],
                                 ['O','P','Q','R','S','T','U'],
                                 ['V','W','X','Y','Z','-','\'']]
+        self.currentKey = 'A'
 
-    def type_phrase(self, phrase, lastkey):
+    def type_phrase(self, phrase, currentKey):
 
         button_list = []
 
         for letter in phrase:
-            button_list += self._get_key_directions(lastkey, letter)
-            self._input_buttons(button_list, letter)
+            newKey = letter
+            button_list = self._get_key_directions(currentKey, newKey)
+            self._input_buttons(button_list)
+            self.currentKey = letter
 
-    def _input_buttons(self, button_list, letter):
+        return button_list
 
+    def _input_buttons(self, button_list):
+
+        # iterate the button list and press the arrows
         for button in button_list:
             if button == 'left':
                 self.roku.left()
+                time.sleep(.2)
             if button == 'right':
                 self.roku.right()
+                time.sleep(.2)
             if button == 'up':
                 self.roku.up()
+                time.sleep(.2)
             if button == 'down':
                 self.roku.down()
-            time.sleep(.2)
+                time.sleep(.2)
+
+        # then select to choose the letter
         self.roku.select()
+        time.sleep(.2)
         return
 
     def _get_key_directions(self, currentKey, newKey):
