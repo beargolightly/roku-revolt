@@ -14,6 +14,7 @@ class YouTubeKeyboardController:
                                 ['H','I','J','K','L','M','N'],
                                 ['O','P','Q','R','S','T','U'],
                                 ['V','W','X','Y','Z','-','\'']]
+
         self.currentKey = currentKey
 
     def type_phrase(self, phrase, delay):
