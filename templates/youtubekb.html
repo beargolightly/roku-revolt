@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>YouTube Keyboard</title>
     <div class="diagnostics">
-        Last Key: {{ lastkey }}<br>
-        Directions: {{ directions }}
-        Sendkeys: {{ sendkeys }}
+        Last Key: {{ lastkey }}<br />
+        Button List: {{ button_list }}<br />
+        Phrase: {{ phrase }}<br />
     </div>
     <div class="kb-form">
         <form action="/youtubekb" method="POST">
@@ -17,6 +17,7 @@
             </fieldset>
         </form>
     </div>
+
 
     <div class="footer">
         <a href="{{ url_for('listapps') }}" target="_blank">APPS LIST</a>

@@ -13,9 +13,26 @@ from youtubekb import YouTubeKeyBoardForm
 
 roku = Roku('10.1.10.96')
 
+# class FakeRoku:
+#     def __init__(self):
+#         pass
+#     def left(self):
+#         pass
+#     def right(self):
+#         pass
+#     def up(self):
+#         pass
+#     def down(self):
+#         pass
+#     def select(self):
+#         pass
+#
+# roku = FakeRoku()
+
 @app.route('/')
 def discovery():
-    session['lastKey'] = 'A'
+    if not session['lastKey']:
+        session['lastKey'] = 'A'
     return redirect(url_for('youtubekeyboard'))
 
 
@@ -30,16 +47,18 @@ def youtubekeyboard():
     # time.sleep(15)
     form = YouTubeKeyBoardForm()
 
-    yt = YouTubeKeyboardController(roku)
+
 
     if request.method == 'POST':
         currentKey = session['lastKey']
-        sendkeys = request.form['sendkeys'].upper()
-        button_list = yt.type_phrase(sendkeys, currentKey)
+        yt = YouTubeKeyboardController(roku, currentKey)
+
+        phrase = request.form['sendkeys'].upper()
+        button_list = yt.type_phrase(phrase, 0.1)
         session['lastKey'] = yt.currentKey
 
         return render_template("youtubekb.html", lastkey=session['lastKey'], form=form,
-                               sendkeys=sendkeys, button_list = button_list)
+                               phrase=phrase, button_list=button_list)
     else:
         return render_template("youtubekb.html", lastkey=session['lastKey'], form=form)
 

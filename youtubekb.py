@@ -7,50 +7,53 @@ class YouTubeKeyBoardForm(FlaskForm):
 
 class YouTubeKeyboardController:
 
-    def __init__(self, roku):
+    def __init__(self, roku, currentKey):
 
         self.roku = roku
         self.YOUTUBEKEYBOARD = [['A','B','C','D','E','F','G' ],
                                 ['H','I','J','K','L','M','N'],
                                 ['O','P','Q','R','S','T','U'],
                                 ['V','W','X','Y','Z','-','\'']]
-        self.currentKey = 'A'
+        self.currentKey = currentKey
 
-    def type_phrase(self, phrase, currentKey):
+    def type_phrase(self, phrase, delay):
 
-        button_list = []
+        complete_button_list = []
 
         for letter in phrase:
             newKey = letter
-            button_list = self._get_key_directions(currentKey, newKey)
-            self._input_buttons(button_list)
+            button_list = self._get_button_list(self.currentKey, newKey)
+            button_list.append('select')
+            complete_button_list += button_list
+            self._input_buttons(button_list, delay)
             self.currentKey = letter
 
-        return button_list
+        return complete_button_list
 
-    def _input_buttons(self, button_list):
+    def _input_buttons(self, button_list, delay):
 
         # iterate the button list and press the arrows
         for button in button_list:
             if button == 'left':
                 self.roku.left()
-                time.sleep(.2)
+                time.sleep(delay)
             if button == 'right':
                 self.roku.right()
-                time.sleep(.2)
+                time.sleep(delay)
             if button == 'up':
                 self.roku.up()
-                time.sleep(.2)
+                time.sleep(delay)
             if button == 'down':
                 self.roku.down()
                 time.sleep(.2)
+            if button == 'select':
+                self.roku.select()
+                time.sleep(.2)
 
         # then select to choose the letter
-        self.roku.select()
-        time.sleep(.2)
         return
 
-    def _get_key_directions(self, currentKey, newKey):
+    def _get_button_list(self, currentKey, newKey):
 
         directions = []
         horizontal_direction = self._get_key_coords(newKey)[1] - self._get_key_coords(currentKey)[1]
