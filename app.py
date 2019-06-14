@@ -31,8 +31,9 @@ roku = Roku('10.1.10.96')
 
 @app.route('/')
 def discovery():
-    if not session['lastKey']:
-        session['lastKey'] = 'A'
+    try: session['lastKey']
+    except: session['lastKey'] = 'A'
+
     return redirect(url_for('youtubekeyboard'))
 
 

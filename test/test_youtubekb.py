@@ -13,22 +13,18 @@ class Test_type_phrase(unittest.TestCase):
         self.roku.select = Mock()
         self.yt = YouTubeKeyboardController(self.roku, 'A')
 
-    def test_type_phrase__mockingtest(self):
-        self.roku.up()
-        self.roku.left()
-        self.roku.left()
-        self.roku.left()
-        self.assertEqual(self.roku.left.call_count, 3)
 
     def test_type_phrase__currentKey(self):
         self.yt.type_phrase('STUFF', 0)
         self.assertEqual(self.yt.currentKey, 'F')
+
 
     def test_type_phrase__complete_button_list(self):
         result = self.yt.type_phrase('STUFF', 0)
         self.assertEqual(result, ['right', 'right', 'right', 'right', 'down', 'down', \
                                    'select', 'right', 'select', 'right', 'select', 'left', \
                                    'up', 'up', 'select', 'select'])
+
 
     def test_type_phrase__typing_stuff(self):
         self.yt.type_phrase('STUFF', 0)
@@ -39,6 +35,14 @@ class Test_type_phrase(unittest.TestCase):
         self.assertEqual(2, self.yt.roku.down.call_count)
         self.assertEqual(5, self.yt.roku.select.call_count)
 
+    def test_type_phrase__with_a_space(self):
+        self.yt.type_phrase('O P', 0)
+
+        self.assertEqual(self.yt.roku.left.call_count, 0)
+        self.assertEqual(self.yt.roku.up.call_count, 2)
+        self.assertEqual(self.yt.roku.right.call_count, 1)
+        self.assertEqual(self.yt.roku.down.call_count, 4)
+        self.assertEqual(self.yt.roku.select.call_count, 3)
 
 
 class Test_get_key_coords(unittest.TestCase):
@@ -49,19 +53,20 @@ class Test_get_key_coords(unittest.TestCase):
 
     def test_get_key_coords_A(self):
         result = self.yt._get_key_coords('A')
-        self.assertEqual(result, (0,0))
+        self.assertEqual((0,0), result)
+
 
     def test_get_key_coords_D(self):
         result = self.yt._get_key_coords('D')
-        self.assertEqual(result, (0,3))
+        self.assertEqual((0,3), result)
 
     def test_get_key_coords_Z(self):
         result = self.yt._get_key_coords('Z')
-        self.assertEqual(result, (3,4))
+        self.assertEqual((3,4), result)
 
     def test_get_key_coords_Q(self):
         result = self.yt._get_key_coords('Q')
-        self.assertEqual(result, (2,2))
+        self.assertEqual((2,2), result)
 
 class Test_get_key_directions(unittest.TestCase):
 
@@ -71,15 +76,24 @@ class Test_get_key_directions(unittest.TestCase):
 
     def test_A_to_B(self):
         result = self.yt._get_button_list('A', 'B')
-        self.assertEqual(result, ['right'])
+        self.assertEqual(['right', 'select'], result)
 
     def test_A_to_X(self):
         result = self.yt._get_button_list('A', 'X')
-        self.assertEqual(result, ['right', 'right', 'down', 'down', 'down'])
+        self.assertEqual(['right', 'right', 'down', 'down', 'down', 'select'], result)
 
     def test_A_to_A(self):
         result = self.yt._get_button_list('A', 'A')
-        self.assertEqual(result, [])
+        self.assertEqual(['select'], result)
+
+    def test_O_to_space(self):
+        result = self.yt._get_button_list('O', ' ')
+
+        button_list = [ 'down', 'down', 'select', 'up' ]
+        self.assertEqual(button_list, result)
+
+    def test_a_whole_phrase(self):
+        result = self.yt._get_button_list
 
 class Test_input_buttons(unittest.TestCase):
 
@@ -109,4 +123,5 @@ class Test_input_buttons(unittest.TestCase):
         self.assertEqual(self.yt.roku.up.call_count, 2)
         self.assertEqual(self.yt.roku.right.call_count, 2)
         self.assertEqual(self.yt.roku.down.call_count, 2)
+
 
